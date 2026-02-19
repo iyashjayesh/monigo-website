@@ -40,6 +40,7 @@ export default defineConfig({
 						{ label: 'Benchmarks', slug: 'reference/benchmarks' },
 						{ label: 'API Reference', slug: 'reference/api-reference' },
 						{ label: 'Migration (v1 → v2)', slug: 'reference/migration-v1-to-v2' },
+						{ label: 'Community', slug: 'reference/community' },
 					],
 				},
 			],
