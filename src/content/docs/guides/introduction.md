@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: Overview of MoniGo — Performance Monitoring for Go Applications
+description: Overview of MoniGo — Performance and Runtime Observability for Go Applications
 ---
 
 **MoniGo** is a performance monitoring library for Go applications. It provides real-time insights into application performance with an intuitive user interface, enabling developers to track and optimize both service-level and function-level metrics.
@@ -17,6 +17,10 @@ description: Overview of MoniGo — Performance Monitoring for Go Applications
 - **Customizable Dashboard** — Manage performance data with an easy-to-use UI.
 - **Visualizations** — Utilize graphs and charts to interpret performance trends.
 - **Custom Thresholds** — Configure custom thresholds for your application's performance and resource usage.
+- **Prometheus Integration** — Built-in `/metrics` endpoint for Prometheus scraping.
+- **OpenTelemetry Export** — Send metrics to any OTel Collector via OTLP/gRPC.
+- **Security Middleware** — Built-in Basic Auth, API Key, IP Whitelist, and Rate Limiting middleware.
+- **Graceful Shutdown** — Automatic SIGINT/SIGTERM handling with proper cleanup via `Shutdown(ctx)`.
 
 ## What's New in v2.0.0
 

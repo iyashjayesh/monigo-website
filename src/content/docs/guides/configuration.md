@@ -32,6 +32,29 @@ monigoInstance := monigo.NewBuilder().
 | `WithHeadless(b)` | `false` | Run without the dashboard UI |
 | `WithTimeZone(tz)` | `"Local"` | Timezone for timestamps |
 | `WithCustomBaseAPIPath(p)` | `"/monigo/api/v1"` | Custom base path for API endpoints |
+| `WithMaxCPUUsage(pct)` | `95.0` | Health threshold for CPU usage (%) |
+| `WithMaxMemoryUsage(pct)` | `95.0` | Health threshold for memory usage (%) |
+| `WithMaxGoRoutines(n)` | `100` | Health threshold for goroutine count |
+| `WithOTelEndpoint(endpoint)` | — | OTLP gRPC endpoint for metric export |
+| `WithOTelHeaders(headers)` | — | Auth headers for OTel exporter |
+| `WithLogLevel(level)` | `slog.LevelInfo` | Structured log level (`log/slog`) |
+| `WithLogger(logger)` | — | Custom `*slog.Logger` instance |
+| `WithDashboardMiddleware(mw...)` | — | HTTP middleware chain for dashboard routes |
+| `WithAPIMiddleware(mw...)` | — | HTTP middleware chain for API routes |
+| `WithAuthFunction(fn)` | — | Custom auth function `func(*http.Request) bool` |
+
+## Health Thresholds
+
+Configure custom thresholds for your application's resource usage alerts:
+
+```go
+monigoInstance := monigo.NewBuilder().
+    WithServiceName("my-service").
+    WithMaxCPUUsage(90).        // Alert when CPU > 90%
+    WithMaxMemoryUsage(90).     // Alert when memory > 90%
+    WithMaxGoRoutines(500).     // Alert when goroutines > 500
+    Build()
+```
 
 ## OpenTelemetry Integration
 
@@ -41,6 +64,9 @@ Send metrics to any OTel Collector:
 monigoInstance := monigo.NewBuilder().
     WithServiceName("my-service").
     WithOTelEndpoint("localhost:4317").
+    WithOTelHeaders(map[string]string{
+        "Authorization": "Bearer <token>",
+    }).
     Build()
 ```
 

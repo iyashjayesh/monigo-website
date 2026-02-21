@@ -32,8 +32,11 @@ monigo.IPWhitelistMiddleware([]string{
 
 ### Rate Limiting
 
+`RateLimitMiddleware` returns a middleware and a `stop` function that should be called on shutdown to release the cleanup goroutine:
+
 ```go
-monigo.RateLimitMiddleware(100, time.Minute) // 100 requests per minute
+mw, stop := monigo.RateLimitMiddleware(100, time.Minute) // 100 requests per minute
+defer stop()
 ```
 
 ### Request Logging
@@ -47,6 +50,9 @@ monigo.LoggingMiddleware()
 ### Using Built-in Middleware
 
 ```go
+mw, stop := monigo.RateLimitMiddleware(100, time.Minute)
+defer stop()
+
 monigoInstance := monigo.NewBuilder().
     WithServiceName("my-service").
 
@@ -59,7 +65,7 @@ monigoInstance := monigo.NewBuilder().
     // API security (for API endpoints)
     WithAPIMiddleware(
         monigo.APIKeyMiddleware("api-key"),
-        monigo.RateLimitMiddleware(100, time.Minute),
+        mw,
     ).
     Build()
 ```
@@ -90,14 +96,17 @@ monigoInstance := monigo.NewBuilder().
 ## Router-Specific Handlers
 
 ```go
-// Gin Framework
-ginHandler := monigo.GetGinHandler("/monigo/api/v1")
-
-// Echo Framework
-echoHandler := monigo.GetEchoHandler("/monigo/api/v1")
+// Any framework supporting http.Handler
+unifiedHandler := monigo.GetUnifiedHandler("/monigo/api/v1")
 
 // Fiber Framework
 fiberHandler := monigo.GetFiberHandler("/monigo/api/v1")
+
+// Gin / Echo / Chi — use the handler map
+apiHandlers := monigo.GetSecuredAPIHandlers(monigoInstance, "/monigo/api/v1")
+for path, handler := range apiHandlers {
+    router.Any(path, wrapFunc(handler))
+}
 ```
 
 ## Static File Handling
@@ -116,18 +125,21 @@ import (
 )
 
 func main() {
+    mw, stop := monigo.RateLimitMiddleware(100, time.Minute)
+    defer stop()
+
     monigoInstance := monigo.NewBuilder().
         WithServiceName("secure-service").
         WithDashboardMiddleware(
             monigo.BasicAuthMiddleware("admin", "secure-password"),
             monigo.LoggingMiddleware(),
         ).
-        WithAPIMiddleware(
-            monigo.RateLimitMiddleware(100, time.Minute),
-        ).
+        WithAPIMiddleware(mw).
         Build()
 
-    monigoInstance.Initialize()
+    if err := monigoInstance.Initialize(); err != nil {
+        log.Fatal("Failed to initialize MoniGo:", err)
+    }
 
     if err := monigo.StartSecuredDashboard(monigoInstance); err != nil {
         log.Fatal("Failed to start secured dashboard:", err)
@@ -152,5 +164,5 @@ func main() {
 | Dashboard loads but CSS/JS show 401 | Static files should bypass auth automatically. Check `isStaticFile()`. |
 | IP Whitelist blocking localhost | Add both `127.0.0.1` and `::1` to your whitelist. |
 | API calls failing with auth errors | Ensure JavaScript is including authentication credentials. |
-| Router integration not working | Use the appropriate framework handler (`GetGinHandler`, etc.). |
+| Router integration not working | Use `GetUnifiedHandler`, `GetFiberHandler`, or `GetAPIHandlers` map for your framework. |
 | Rate limiting too restrictive | Adjust parameters: `RateLimitMiddleware(requests, timeWindow)`. |

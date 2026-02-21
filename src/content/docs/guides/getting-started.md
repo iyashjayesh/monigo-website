@@ -19,7 +19,6 @@ go get github.com/iyashjayesh/monigo@latest
 package main
 
 import (
-    "context"
     "log"
     "math"
     "net/http"
@@ -62,3 +61,16 @@ func highCPUUsage() {
 ```
 
 By default, the dashboard will be available at `http://localhost:8080/` (or the port you configured).
+
+## Graceful Shutdown
+
+MoniGo automatically handles SIGINT/SIGTERM when you use `Start()`. For manual control over shutdown (e.g. in tests or custom orchestration), use `Shutdown`:
+
+```go
+ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+
+if err := monigoInstance.Shutdown(ctx); err != nil {
+    log.Printf("MoniGo shutdown error: %v", err)
+}
+```

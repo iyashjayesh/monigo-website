@@ -9,11 +9,18 @@ Access the MoniGo API at `http://localhost:8080/monigo/api/v1/<endpoint>` (or yo
 
 | Endpoint | Description | Method | Request | Response |
 |----------|-------------|--------|---------|----------|
-| `/monigo/api/v1/metrics` | Get all metrics | GET | None | JSON |
-| `/monigo/api/v1/go-routines-stats` | Get goroutine stats | GET | None | JSON |
-| `/monigo/api/v1/service-info` | Get service info | GET | None | JSON |
-| `/monigo/api/v1/service-metrics` | Get service metrics | POST | JSON | JSON |
-| `/monigo/api/v1/reports` | Get history data | POST | JSON | JSON |
+| `/monigo/api/v1/metrics` | Current service statistics | GET | None | JSON |
+| `/monigo/api/v1/go-routines-stats` | Goroutine stack analysis | GET | None | JSON |
+| `/monigo/api/v1/service-info` | Service metadata | GET | None | JSON |
+| `/monigo/api/v1/service-metrics` | Query time-series data | POST | JSON | JSON |
+| `/monigo/api/v1/function` | Function trace summary | GET | None | JSON |
+| `/monigo/api/v1/function-details` | pprof reports for a function | GET | `?name=` | JSON |
+| `/monigo/api/v1/reports` | Aggregated report data | POST | JSON | JSON |
+| `/metrics` | Prometheus scrape endpoint | GET | None | Prometheus text |
+
+:::caution[HTTP Method Enforcement]
+All endpoints enforce their declared HTTP method. Sending the wrong method (e.g. POST to a GET endpoint) returns **405 Method Not Allowed**.
+:::
 
 :::tip
 When using router integration, the API path can be customized using the `CustomBaseAPIPath` field or by passing a custom path to the registration functions.
