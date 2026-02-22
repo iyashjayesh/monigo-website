@@ -152,8 +152,8 @@ default:
 
 ## Benefits
 
-- **Zero Overhead in Hot Paths** — Non-sampled calls have sub-millisecond overhead.
-- **Cleaner Code** — No need to wrap functions in anonymous functions.
-- **Better Function Identification** — Actual function names appear in metrics.
-- **Type Safety** — Compile-time checking of function signatures.
-- **Backward Compatibility** — Existing code continues to work without changes.
+- **Zero Overhead in Hot Paths** - Non-sampled calls have sub-millisecond overhead.
+- **Cleaner Code** - No need to wrap functions in anonymous functions.
+- **Better Function Identification** - Actual function names appear in metrics.
+- **Type Safety** - Compile-time checking of function signatures.
+- **Backward Compatibility** - Existing code continues to work without changes.

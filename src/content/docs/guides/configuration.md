@@ -9,7 +9,7 @@ MoniGo uses a **builder pattern** for configuration. All options are chained off
 
 ```go
 monigoInstance := monigo.NewBuilder().
-    WithServiceName("data-api").        // Required — identifies your service
+    WithServiceName("data-api").        // Required - identifies your service
     WithPort(8080).                     // Dashboard port (default: 8080)
     WithRetentionPeriod("4d").          // How long to keep data points
     WithDataPointsSyncFrequency("5s").  // Sync interval
@@ -35,13 +35,13 @@ monigoInstance := monigo.NewBuilder().
 | `WithMaxCPUUsage(pct)` | `95.0` | Health threshold for CPU usage (%) |
 | `WithMaxMemoryUsage(pct)` | `95.0` | Health threshold for memory usage (%) |
 | `WithMaxGoRoutines(n)` | `100` | Health threshold for goroutine count |
-| `WithOTelEndpoint(endpoint)` | — | OTLP gRPC endpoint for metric export |
-| `WithOTelHeaders(headers)` | — | Auth headers for OTel exporter |
+| `WithOTelEndpoint(endpoint)` | - | OTLP gRPC endpoint for metric export |
+| `WithOTelHeaders(headers)` | - | Auth headers for OTel exporter |
 | `WithLogLevel(level)` | `slog.LevelInfo` | Structured log level (`log/slog`) |
-| `WithLogger(logger)` | — | Custom `*slog.Logger` instance |
-| `WithDashboardMiddleware(mw...)` | — | HTTP middleware chain for dashboard routes |
-| `WithAPIMiddleware(mw...)` | — | HTTP middleware chain for API routes |
-| `WithAuthFunction(fn)` | — | Custom auth function `func(*http.Request) bool` |
+| `WithLogger(logger)` | - | Custom `*slog.Logger` instance |
+| `WithDashboardMiddleware(mw...)` | - | HTTP middleware chain for dashboard routes |
+| `WithAPIMiddleware(mw...)` | - | HTTP middleware chain for API routes |
+| `WithAuthFunction(fn)` | - | Custom auth function `func(*http.Request) bool` |
 
 ## Health Thresholds
 

@@ -102,7 +102,7 @@ unifiedHandler := monigo.GetUnifiedHandler("/monigo/api/v1")
 // Fiber Framework
 fiberHandler := monigo.GetFiberHandler("/monigo/api/v1")
 
-// Gin / Echo / Chi — use the handler map
+// Gin / Echo / Chi - use the handler map
 apiHandlers := monigo.GetSecuredAPIHandlers(monigoInstance, "/monigo/api/v1")
 for path, handler := range apiHandlers {
     router.Any(path, wrapFunc(handler))
@@ -149,13 +149,13 @@ func main() {
 
 ## Production Best Practices
 
-1. **Use Strong Credentials** — Always use strong, unique passwords and API keys.
-2. **Enable HTTPS** — Always use HTTPS in production environments.
-3. **Implement Rate Limiting** — Prevent abuse with rate limiting.
-4. **IP Restrictions** — Use IP whitelisting for internal networks.
-5. **Request Logging** — Enable logging to monitor access patterns.
-6. **Regular Rotation** — Regularly rotate API keys and passwords.
-7. **Environment Variables** — Store credentials in environment variables.
+1. **Use Strong Credentials** - Always use strong, unique passwords and API keys.
+2. **Enable HTTPS** - Always use HTTPS in production environments.
+3. **Implement Rate Limiting** - Prevent abuse with rate limiting.
+4. **IP Restrictions** - Use IP whitelisting for internal networks.
+5. **Request Logging** - Enable logging to monitor access patterns.
+6. **Regular Rotation** - Regularly rotate API keys and passwords.
+7. **Environment Variables** - Store credentials in environment variables.
 
 ## Troubleshooting
 

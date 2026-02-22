@@ -1,6 +1,6 @@
 ---
 title: Router Integration
-description: Integrate MoniGo with your existing HTTP router — standard mux, Gin, Echo, and more
+description: Integrate MoniGo with your existing HTTP router - standard mux, Gin, Echo, and more
 ---
 
 MoniGo supports integration with your existing HTTP server, allowing you to use your own router and authorization system.
@@ -210,8 +210,8 @@ mux.HandleFunc("/monigo/", monigo.GetUnifiedHandler("/monigo/api/v1"))
 
 ## Benefits
 
-- **Unified Server** — Run MoniGo on the same port as your application.
-- **Custom Authorization** — Use your existing auth system to protect MoniGo endpoints.
-- **Framework Compatibility** — Works with any HTTP router (Gin, Echo, Chi, Fiber, etc.).
-- **Flexible Configuration** — Choose which parts of MoniGo to integrate.
-- **Graceful Shutdown** — Call `Shutdown(ctx)` for proper cleanup on exit.
+- **Unified Server** - Run MoniGo on the same port as your application.
+- **Custom Authorization** - Use your existing auth system to protect MoniGo endpoints.
+- **Framework Compatibility** - Works with any HTTP router (Gin, Echo, Chi, Fiber, etc.).
+- **Flexible Configuration** - Choose which parts of MoniGo to integrate.
+- **Graceful Shutdown** - Call `Shutdown(ctx)` for proper cleanup on exit.

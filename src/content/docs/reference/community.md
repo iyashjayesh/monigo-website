@@ -22,4 +22,4 @@ For questions or feedback, please open an [issue](https://github.com/iyashjayesh
 
 ## License
 
-This project is licensed under the **Apache 2.0 License** — see the [LICENSE file](https://github.com/iyashjayesh/monigo?tab=Apache-2.0-1-ov-file) for details.
+This project is licensed under the **Apache 2.0 License** - see the [LICENSE file](https://github.com/iyashjayesh/monigo?tab=Apache-2.0-1-ov-file) for details.

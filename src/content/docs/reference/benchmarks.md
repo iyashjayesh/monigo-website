@@ -24,7 +24,7 @@ go test -bench=. -benchmem -benchtime=10s ./...
 
 ## Performance Highlights
 
-- **Sub-microsecond operations** — Core metric calculations complete in under 300 ns.
-- **Fast storage inserts** — In-memory storage inserts at 84 ns per data point.
-- **Efficient queries** — Selecting 1,000 data points takes ~4 μs.
-- **Zero-overhead tracing** — Non-sampled function calls add sub-millisecond overhead thanks to adaptive sampling.
+- **Sub-microsecond operations** - Core metric calculations complete in under 300 ns.
+- **Fast storage inserts** - In-memory storage inserts at 84 ns per data point.
+- **Efficient queries** - Selecting 1,000 data points takes ~4 μs.
+- **Zero-overhead tracing** - Non-sampled function calls add sub-millisecond overhead thanks to adaptive sampling.

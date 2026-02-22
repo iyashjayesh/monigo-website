@@ -14,7 +14,7 @@ description: Breaking changes and migration guide from MoniGo v1 to v2
 | `monigo.GetRuningPort()` | `monigo.GetRunningPort()` |
 | `api.ViewFunctionMaetrtics` | `api.ViewFunctionMetrics` |
 | `Build()` silent on errors | `Build()` panics on invalid config |
-| API accepts any HTTP method | API enforces GET/POST — wrong method returns 405 |
+| API accepts any HTTP method | API enforces GET/POST - wrong method returns 405 |
 | `log.Printf` logging | Structured logging via `log/slog` |
 | Data purged on startup | Historical data preserved across restarts |
 | `http.DefaultServeMux` used internally | Dedicated `http.ServeMux` per instance |
@@ -84,15 +84,15 @@ if err := monigoInstance.Shutdown(ctx); err != nil {
 
 ## What's New in v2.0.0
 
-- **context.Context support** — All tracing functions accept `context.Context`.
-- **OpenTelemetry export** — Send metrics to any OTel Collector via `WithOTelEndpoint()`.
-- **Structured logging** — Uses `log/slog` — configure via `WithLogLevel()` or `WithLogger()`.
-- **Graceful shutdown** — SIGINT/SIGTERM triggers proper cleanup; also available via `Shutdown(ctx)`.
-- **Builder validation** — `Build()` validates config at construction time.
-- **Decoupled storage types** — Storage interface uses monigo-owned types (no tstorage leak).
-- **Data preservation** — Historical data survives restarts (no more `PurgeStorage()` on startup).
-- **Thread-safe sampling** — `samplingRate` uses `sync/atomic` to eliminate data races.
-- **Deep copy traces** — `FunctionTraceDetails()` returns deep copies instead of raw map pointers.
-- **Prometheus fixes** — Raw float64 values instead of parsing formatted strings.
+- **context.Context support** - All tracing functions accept `context.Context`.
+- **OpenTelemetry export** - Send metrics to any OTel Collector via `WithOTelEndpoint()`.
+- **Structured logging** - Uses `log/slog` - configure via `WithLogLevel()` or `WithLogger()`.
+- **Graceful shutdown** - SIGINT/SIGTERM triggers proper cleanup; also available via `Shutdown(ctx)`.
+- **Builder validation** - `Build()` validates config at construction time.
+- **Decoupled storage types** - Storage interface uses monigo-owned types (no tstorage leak).
+- **Data preservation** - Historical data survives restarts (no more `PurgeStorage()` on startup).
+- **Thread-safe sampling** - `samplingRate` uses `sync/atomic` to eliminate data races.
+- **Deep copy traces** - `FunctionTraceDetails()` returns deep copies instead of raw map pointers.
+- **Prometheus fixes** - Raw float64 values instead of parsing formatted strings.
 
 See [CHANGELOG.md](https://github.com/iyashjayesh/monigo/blob/main/CHANGELOG.md) for the full list.
