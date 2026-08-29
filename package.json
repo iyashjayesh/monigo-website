@@ -5,11 +5,10 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/sync-changelog.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sync:changelog": "node scripts/sync-changelog.mjs",
-    "prebuild": "node scripts/sync-changelog.mjs"
+    "sync:changelog": "node scripts/sync-changelog.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.1",
