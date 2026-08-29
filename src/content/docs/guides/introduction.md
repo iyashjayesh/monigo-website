@@ -22,14 +22,16 @@ description: Overview of MoniGo - Performance and Runtime Observability for Go A
 - **Security Middleware** - Built-in Basic Auth, API Key, IP Whitelist, and Rate Limiting middleware.
 - **Graceful Shutdown** - Automatic SIGINT/SIGTERM handling with proper cleanup via `Shutdown(ctx)`.
 
-## What's New in v2.0.0
+## What's new
 
-- **context.Context support** - All tracing functions now accept `context.Context` as the first parameter.
-- **OpenTelemetry export** - Send metrics to any OTel Collector via `WithOTelEndpoint()`.
-- **Structured logging** - Uses `log/slog` - configure via `WithLogLevel()` or `WithLogger()`.
-- **Graceful shutdown** - SIGINT/SIGTERM triggers proper cleanup.
-- **Builder validation** - `Build()` validates config at construction time.
-- **Decoupled storage types** - Storage interface uses monigo-owned types (no tstorage leak).
+MoniGo is on **v1.7.0**. Recent releases added per-function call counts and
+latency percentiles, an Exporters page reporting Prometheus and OpenTelemetry
+status, and in-process pprof rendering so profiling works in containers without
+the Go toolchain.
+
+The [changelog](/monigo-website/reference/changelog/) has every release,
+generated from the library's own `CHANGELOG.md`. Upgrading from an older
+release is covered in [Upgrading](/monigo-website/reference/upgrading/).
 
 ## Architecture
 

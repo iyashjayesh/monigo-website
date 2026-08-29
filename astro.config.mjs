@@ -6,6 +6,12 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://iyashjayesh.github.io',
 	base: '/monigo-website',
+	// The migration page was renamed: it described a "v1 → v2" upgrade for a v2
+	// that was never published. The old URL is live on GitHub Pages and may be
+	// linked from elsewhere, so it redirects rather than 404s.
+	redirects: {
+		'/reference/migration-v1-to-v2': '/monigo-website/reference/upgrading/',
+	},
 	integrations: [
 		starlight({
 			title: 'MoniGo',
@@ -30,6 +36,7 @@ export default defineConfig({
 						{ label: 'Configuration', slug: 'guides/configuration' },
 						{ label: 'Function Tracing', slug: 'guides/function-tracing' },
 						{ label: 'Router Integration', slug: 'guides/router-integration' },
+						{ label: 'Exporters', slug: 'guides/exporters' },
 						{ label: 'Security', slug: 'guides/security' },
 						{ label: 'Examples', slug: 'guides/examples' },
 					],
@@ -39,7 +46,8 @@ export default defineConfig({
 					items: [
 						{ label: 'Benchmarks', slug: 'reference/benchmarks' },
 						{ label: 'API Reference', slug: 'reference/api-reference' },
-						{ label: 'Migration (v1 → v2)', slug: 'reference/migration-v1-to-v2' },
+						{ label: 'Upgrading', slug: 'reference/upgrading' },
+						{ label: 'Changelog', slug: 'reference/changelog' },
 						{ label: 'Community', slug: 'reference/community' },
 					],
 				},

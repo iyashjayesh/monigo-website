@@ -115,6 +115,32 @@ Or globally at runtime:
 monigo.SetSamplingRate(1000)
 ```
 
+### What a sampled call costs
+
+Profiling a call is not cheap, and the cost does not scale with the work.
+`pprof.StopCPUProfile` blocks while the runtime flushes its profile buffer,
+which takes a roughly constant **~200ms** regardless of how long the function
+ran. Measured on a 1ms function:
+
+| | |
+|---|---|
+| sampled call | 202.9ms |
+| unsampled call | 1.1ms |
+| overhead | **201.8ms** |
+
+At the default rate, a traced handler serving 100 rps stalls for ~200ms once
+per second. `ExecutionTime` is captured before the stop, so the recorded metric
+reads 1ms while the caller's goroutine was blocked for 203ms.
+
+Go's CPU profiler also samples at 100 Hz, so a call shorter than ~10ms usually
+finishes between two samples and captures nothing. At the default settings the
+common case is to pay the 200ms and get an empty profile.
+
+This closes off the obvious workaround: lowering the rate collects more
+profiles but stalls more often, and raising it makes profiles rarer without
+making them any less empty. **Trace functions that do enough work to be worth
+sampling, and leave hot, short ones untraced.**
+
 ## Function Name Generation
 
 The enhanced tracing methods automatically generate descriptive function names that include:
@@ -124,6 +150,20 @@ The enhanced tracing methods automatically generate descriptive function names t
 - **Return types**: `functionName(string,int)->(float64,error)`
 
 This makes it easier to identify and analyze specific function calls in the dashboard.
+
+## Call counts and latency percentiles
+
+The Functions page shows `CALLS`, `P50` and `P95` for every traced function,
+alongside execution time and memory delta.
+
+The distribution comes from a fixed-bucket histogram — 216 bytes per function
+regardless of call volume, against roughly 10 MB at the function cap if raw
+samples were kept. That has two consequences worth knowing:
+
+- **Values are bucket upper bounds, not interpolations.** `~4ms` means "at most
+  4ms", which is why the figures carry a `~`.
+- **Below 20 calls the columns read `—`.** A p95 of three calls is the slowest
+  of three, not a percentile, so it is not shown.
 
 ## Handling Multiple Return Values
 
