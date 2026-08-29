@@ -1,11 +1,28 @@
 ---
-title: "Migration: v1 → v2"
-description: Breaking changes and migration guide from MoniGo v1 to v2
+title: Upgrading
+description: What changed between older MoniGo releases and the current one, and what you need to edit.
 ---
 
-## Breaking Changes
+If you are on a MoniGo release older than v1.3.0, the API has moved underneath
+you. This page lists what changed and what you have to edit.
 
-| v1 | v2 |
+:::note[There is no v2]
+Earlier versions of these docs described the changes below as a "v2.0.0"
+release. That version was tagged but never published — the tag is missing the
+`/v2` module path Go requires, so `go get` cannot resolve it. Everything here
+shipped in the **v1** line instead, and `@latest` gives you all of it.
+
+See the [changelog](/monigo-website/reference/changelog/) for what landed in
+which release.
+:::
+
+```bash
+go get github.com/iyashjayesh/monigo@latest
+```
+
+## Breaking changes
+
+| Older releases | Current |
 |---|---|
 | `monigo.TraceFunction(fn)` | `monigo.TraceFunction(ctx, fn)` |
 | `monigo.TraceFunctionWithArgs(fn, args...)` | `monigo.TraceFunctionWithArgs(ctx, fn, args...)` |
@@ -74,7 +91,7 @@ monigoInstance := monigo.NewBuilder().
 
 ### 6. Add Graceful Shutdown
 
-v2 handles SIGINT/SIGTERM automatically when using `Start()`. For manual control:
+Current releases handle SIGINT/SIGTERM automatically when using `Start()`. For manual control:
 
 ```go
 if err := monigoInstance.Shutdown(ctx); err != nil {
@@ -82,17 +99,8 @@ if err := monigoInstance.Shutdown(ctx); err != nil {
 }
 ```
 
-## What's New in v2.0.0
+## Everything that changed
 
-- **context.Context support** - All tracing functions accept `context.Context`.
-- **OpenTelemetry export** - Send metrics to any OTel Collector via `WithOTelEndpoint()`.
-- **Structured logging** - Uses `log/slog` - configure via `WithLogLevel()` or `WithLogger()`.
-- **Graceful shutdown** - SIGINT/SIGTERM triggers proper cleanup; also available via `Shutdown(ctx)`.
-- **Builder validation** - `Build()` validates config at construction time.
-- **Decoupled storage types** - Storage interface uses monigo-owned types (no tstorage leak).
-- **Data preservation** - Historical data survives restarts (no more `PurgeStorage()` on startup).
-- **Thread-safe sampling** - `samplingRate` uses `sync/atomic` to eliminate data races.
-- **Deep copy traces** - `FunctionTraceDetails()` returns deep copies instead of raw map pointers.
-- **Prometheus fixes** - Raw float64 values instead of parsing formatted strings.
-
-See [CHANGELOG.md](https://github.com/iyashjayesh/monigo/blob/main/CHANGELOG.md) for the full list.
+The per-release detail lives on the [changelog](/monigo-website/reference/changelog/),
+generated from the library's own `CHANGELOG.md` so it cannot drift from what
+was actually released.
