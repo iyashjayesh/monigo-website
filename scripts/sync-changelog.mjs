@@ -13,6 +13,14 @@
  * failed fetch leaves the committed page in place and warns. The generated
  * file is committed for exactly this reason: the site builds offline, and the
  * diff is reviewable.
+ *
+ * The committed copy will lag the deployed page, and that is expected. The
+ * deploy workflow runs on a daily schedule precisely so a new library release
+ * reaches the site without anyone pushing here; each of those builds
+ * regenerates this file into dist/ and never commits it. Treat the committed
+ * version as the offline fallback, not as the source of truth -- and if the
+ * live site ever shows an outdated release, look for a `[changelog]` warning
+ * in the build log before assuming the script is broken.
  */
 import { writeFile, readFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
