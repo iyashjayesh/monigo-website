@@ -100,6 +100,15 @@ function anchor(version) {
   return 'v' + version.replace(/\./g, '-').toLowerCase();
 }
 
+function partition(releases, installable) {
+  const unpublished = (r) =>
+    r.version !== 'Unreleased' && installable && !installable.has(r.version);
+  return {
+    real: releases.filter((r) => !unpublished(r)),
+    phantom: releases.filter(unpublished),
+  };
+}
+
 function render(releases, installable) {
   const front = [
     '---',
@@ -137,14 +146,16 @@ function render(releases, installable) {
     );
   }
 
-  const sections = releases.map((r) => {
+  const { real, phantom } = partition(releases, installable);
+
+  const sectionFor = (r) => {
     const unpublished =
       r.version !== 'Unreleased' && installable && !installable.has(r.version);
     const alreadyFlagged = /never published/i.test(r.body);
     const heading =
       r.version === 'Unreleased'
         ? '## Unreleased'
-        : `## v${r.version}` + (r.date ? ` — ${r.date}` : '');
+        : `## v${r.version}`;
     const link =
       r.version === 'Unreleased'
         ? `[Compare against the latest release](${REPO}/compare/v${released[0]?.version ?? 'main'}...main)`
@@ -159,12 +170,34 @@ function render(releases, installable) {
           ':::',
         ].join('\n')
       : '';
-    const body = [heading, note, '', demote(r.body), ''];
+    const dateLine = r.date ? `*Released ${r.date}*` : '';
+    const body = [heading, note, '', dateLine, '', demote(r.body), ''];
     if (!unpublished) body.push(link, '');
     return body.join('\n');
-  });
+  };
 
-  return front.join('\n') + sections.join('\n---\n\n') + '\n';
+  const out = [front.join('\n')];
+  out.push(real.map(sectionFor).join('\n---\n\n'));
+
+  if (phantom.length) {
+    out.push(
+      [
+        '',
+        '---',
+        '',
+        '## Tagged but never released',
+        '',
+        'These versions exist as git tags and are described in the library’s',
+        'changelog, but the Go module proxy will not serve them, so `go get`',
+        'cannot resolve them. They are kept here as a record. Nothing in this',
+        'section is installable.',
+        '',
+      ].join('\n')
+    );
+    out.push(phantom.map(sectionFor).join('\n---\n\n'));
+  }
+
+  return out.join('\n') + '\n';
 }
 
 async function main() {

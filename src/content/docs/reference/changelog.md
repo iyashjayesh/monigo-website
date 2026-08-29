@@ -18,65 +18,11 @@ The current release is **v1.7.0** (2026-08-30).
 go get github.com/iyashjayesh/monigo@latest
 ```
 
-## v2.0.0 — 2026-02-10
+
+## v1.7.0
 
 
-> **Never published.** This release was tagged `v2.0.0`, but the Go module proxy
-> rejects it: `go.mod` declares `module github.com/iyashjayesh/monigo` with no
-> `/v2` suffix, and Go requires the major version to appear in the module path
-> from v2 onwards. `go get` therefore continued to serve `v1.2.0`, and everything
-> below was unreachable to anyone installing the library.
->
-> ```
-> $ curl -s https://proxy.golang.org/github.com/iyashjayesh/monigo/@v/v2.0.0.info
-> not found: invalid version: module contains a go.mod file, so module path must
-> match major version ("github.com/iyashjayesh/monigo/v2")
-> ```
->
-> The release line was renumbered rather than renaming the module: `/v2` would be
-> permanent for an API that is not v2-shaped, and per the proxy there were no v2
-> consumers to preserve. The changes below shipped in `1.3.0`.
-
-#### Breaking Changes
-- Renamed `GetRuningPort()` to `GetRunningPort()`
-- Renamed `ViewFunctionMaetrtics()` to `ViewFunctionMetrics()` (api package)
-- `Build()` now panics on invalid config (missing ServiceName, bad port, bad StorageType)
-- All API endpoints now enforce HTTP methods (GET/POST) -- wrong method returns 405
-- `isStaticFile()` no longer bypasses auth for `.html` files
-- `context.Context` added as first parameter to `TraceFunction`, `TraceFunctionWithArgs`, `TraceFunctionWithReturn`, `TraceFunctionWithReturns`, `GetServiceStats`
-- Structured logging via `log/slog` replaces `log.Printf` -- use `WithLogger()` / `WithLogLevel()` to customize
-
-#### Fixed
-- **Data loss**: removed `PurgeStorage()` from startup -- historical data now survives restarts
-- **Data race** on `samplingRate` -- now uses `sync/atomic`
-- `FunctionTraceDetails()` returns deep copy instead of raw map pointer
-- Replaced `http.DefaultServeMux` with dedicated mux (prevents route collisions)
-- All API handlers check marshal errors and return proper 500s
-- Hardcoded `host=server1` label replaced with `os.Hostname()`
-- Duplicate `"sys"` key in raw memory stats
-- `GCCPUFraction` and counter metrics no longer incorrectly converted as bytes
-- `ConvertBytesToUnit` now uses base-1024 (was base-1000)
-- Prometheus exporter uses raw float64 values instead of parsing formatted strings
-- Replaced deprecated `ioutil.ReadAll` with `io.ReadAll`
-
-#### Added
-- Graceful shutdown with SIGINT/SIGTERM handling
-- Builder validation at `Build()` time
-- Comprehensive test suite across all packages (core, api, common, timeseries, config)
-- Benchmarks for hot paths (core, timeseries, common)
-- OpenTelemetry exporter option via `WithOTelEndpoint()`
-- Structured logging via `log/slog` with `WithLogger()` and `WithLogLevel()` builder options
-- `context.Context` propagation through public API
-- Decoupled `Storage` interface from tstorage types (monigo-owned `Label`, `DataPoint`, `Row`)
-
-#### Changed
-- CI updated to Go 1.24, with race detector and `go vet`
-- Storage interface uses monigo-owned types instead of tstorage types
-
----
-
-## v1.7.0 — 2026-08-30
-
+*Released 2026-08-30*
 
 #### Added
 
@@ -185,8 +131,10 @@ go get github.com/iyashjayesh/monigo@latest
 
 ---
 
-## v1.6.0 — 2026-08-29
+## v1.6.0
 
+
+*Released 2026-08-29*
 
 #### Added
 - **Per-function call counts and approximate latency percentiles.** `CALLS`,
@@ -241,8 +189,10 @@ and the page is absent rather than filled with plausible numbers:
 
 ---
 
-## v1.5.0 — 2026-08-29
+## v1.5.0
 
+
+*Released 2026-08-29*
 
 The dashboard rebuilt on the new design, and a set of measurements that
 were reporting things they had not measured. The security fix that landed
@@ -336,8 +286,10 @@ list it. It survives only on the GitHub releases page.
 
 ---
 
-## v1.4.1 — 2026-08-29
+## v1.4.1
 
+
+*Released 2026-08-29*
 
 Released on its own, ahead of the dashboard work, because none of it
 depends on that and a credential the dashboard hands itself should not
@@ -360,8 +312,10 @@ wait behind a UI project.
 
 ---
 
-## v1.4.0 — 2026-08-28
+## v1.4.0
 
+
+*Released 2026-08-28*
 
 #### Added
 - Design token layer in `static/css/monigo-styles.css`: 122 custom properties covering type, spacing, radius, elevation, five surface planes, four ink tones, five semantic states and an eight-colour chart series palette, in matched light and dark sets. Purely additive -- nothing consumes them yet, and removing both rules from the live stylesheet changes the computed style of zero of 713 sampled elements. Every documented contrast ratio is verified: text pairs clear 4.5:1, control borders and the focus ring clear 3:1
@@ -379,8 +333,10 @@ wait behind a UI project.
 
 ---
 
-## v1.3.0 — 2026-08-28
+## v1.3.0
 
+
+*Released 2026-08-28*
 
 > Tagged at `a58a30f`, a branch commit that was subsequently squash-merged, so
 > the tag is not an ancestor of `main`. Its contents are everything through the
@@ -431,4 +387,71 @@ wait behind a UI project.
 - **The embedded dashboard shrank from 17.1 MB to 7.9 MB (-54%), and from 71 files to 46.** Everything under `static/` is compiled into the consuming service's binary by `//go:embed static/*` and downloaded by every `go get`, so this is weight every user carried whether or not they ever opened the dashboard. Removed: `assets/ss/d1-d10.png` (7.6 MB), Product Hunt marketing images, an unused animated logo and dropdown arrow, and a favicon variant set -- 28 files, none referenced by any page, stylesheet, script or document. Note this does not shrink existing clones, since the blobs remain in git history; the module zip is what `go get` downloads
 
 [Release notes](https://github.com/iyashjayesh/monigo/releases/tag/v1.3.0)
+
+
+---
+
+## Tagged but never released
+
+These versions exist as git tags and are described in the library’s
+changelog, but the Go module proxy will not serve them, so `go get`
+cannot resolve them. They are kept here as a record. Nothing in this
+section is installable.
+
+## v2.0.0
+
+
+*Released 2026-02-10*
+
+> **Never published.** This release was tagged `v2.0.0`, but the Go module proxy
+> rejects it: `go.mod` declares `module github.com/iyashjayesh/monigo` with no
+> `/v2` suffix, and Go requires the major version to appear in the module path
+> from v2 onwards. `go get` therefore continued to serve `v1.2.0`, and everything
+> below was unreachable to anyone installing the library.
+>
+> ```
+> $ curl -s https://proxy.golang.org/github.com/iyashjayesh/monigo/@v/v2.0.0.info
+> not found: invalid version: module contains a go.mod file, so module path must
+> match major version ("github.com/iyashjayesh/monigo/v2")
+> ```
+>
+> The release line was renumbered rather than renaming the module: `/v2` would be
+> permanent for an API that is not v2-shaped, and per the proxy there were no v2
+> consumers to preserve. The changes below shipped in `1.3.0`.
+
+#### Breaking Changes
+- Renamed `GetRuningPort()` to `GetRunningPort()`
+- Renamed `ViewFunctionMaetrtics()` to `ViewFunctionMetrics()` (api package)
+- `Build()` now panics on invalid config (missing ServiceName, bad port, bad StorageType)
+- All API endpoints now enforce HTTP methods (GET/POST) -- wrong method returns 405
+- `isStaticFile()` no longer bypasses auth for `.html` files
+- `context.Context` added as first parameter to `TraceFunction`, `TraceFunctionWithArgs`, `TraceFunctionWithReturn`, `TraceFunctionWithReturns`, `GetServiceStats`
+- Structured logging via `log/slog` replaces `log.Printf` -- use `WithLogger()` / `WithLogLevel()` to customize
+
+#### Fixed
+- **Data loss**: removed `PurgeStorage()` from startup -- historical data now survives restarts
+- **Data race** on `samplingRate` -- now uses `sync/atomic`
+- `FunctionTraceDetails()` returns deep copy instead of raw map pointer
+- Replaced `http.DefaultServeMux` with dedicated mux (prevents route collisions)
+- All API handlers check marshal errors and return proper 500s
+- Hardcoded `host=server1` label replaced with `os.Hostname()`
+- Duplicate `"sys"` key in raw memory stats
+- `GCCPUFraction` and counter metrics no longer incorrectly converted as bytes
+- `ConvertBytesToUnit` now uses base-1024 (was base-1000)
+- Prometheus exporter uses raw float64 values instead of parsing formatted strings
+- Replaced deprecated `ioutil.ReadAll` with `io.ReadAll`
+
+#### Added
+- Graceful shutdown with SIGINT/SIGTERM handling
+- Builder validation at `Build()` time
+- Comprehensive test suite across all packages (core, api, common, timeseries, config)
+- Benchmarks for hot paths (core, timeseries, common)
+- OpenTelemetry exporter option via `WithOTelEndpoint()`
+- Structured logging via `log/slog` with `WithLogger()` and `WithLogLevel()` builder options
+- `context.Context` propagation through public API
+- Decoupled `Storage` interface from tstorage types (monigo-owned `Label`, `DataPoint`, `Row`)
+
+#### Changed
+- CI updated to Go 1.24, with race detector and `go vet`
+- Storage interface uses monigo-owned types instead of tstorage types
 
