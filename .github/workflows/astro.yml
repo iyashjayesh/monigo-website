@@ -12,6 +12,24 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # The changelog page is generated at build time from the library's
+  # CHANGELOG.md, so it is only as fresh as the last deploy. Without a trigger
+  # of its own, a new library release would never reach the site: nothing
+  # pushes to this repository when monigo is tagged.
+  #
+  # Daily at 06:00 UTC. A docs site does not need to be quicker than that, and
+  # a schedule needs no secrets, so it keeps working whether or not the
+  # repository_dispatch below is ever wired up.
+  schedule:
+    - cron: "0 6 * * *"
+
+  # Instant path: the library repository can fire this on release, for sites
+  # that would rather not wait for the daily run. Requires a token with access
+  # to this repository, so it stays optional -- the schedule covers the case
+  # where it is not configured.
+  repository_dispatch:
+    types: [monigo-release]
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
