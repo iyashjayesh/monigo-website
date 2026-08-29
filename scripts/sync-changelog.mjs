@@ -28,7 +28,10 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'src/content/docs/reference/changelog.md');
+// Overridable so the generator can be exercised against a fixture -- the
+// grace-period behaviour below is otherwise only observable on a release day.
 const SOURCE =
+  process.env.CHANGELOG_SOURCE ||
   'https://raw.githubusercontent.com/iyashjayesh/monigo/main/CHANGELOG.md';
 const REPO = 'https://github.com/iyashjayesh/monigo';
 const PROXY = 'https://proxy.golang.org/github.com/iyashjayesh/monigo/@v/list';
@@ -108,9 +111,32 @@ function anchor(version) {
   return 'v' + version.replace(/\./g, '-').toLowerCase();
 }
 
+/* A release absent from the proxy is only "never published" once it has had
+ * time to get there.
+ *
+ * The proxy does not carry a tag the instant it is pushed -- v1.7.0 took
+ * several polls to appear. Without a grace period, a scheduled build landing
+ * in that window would file a brand-new release under "Tagged but never
+ * released", on the day it shipped, which is the worst moment to be wrong.
+ *
+ * v2.0.0 is still caught: it is dated months back and remains unresolvable.
+ */
+const PROPAGATION_GRACE_DAYS = 2;
+
+function tooNewToJudge(release) {
+  if (!release.date) return false;           // no date, no benefit of the doubt
+  const released = Date.parse(release.date + 'T00:00:00Z');
+  if (Number.isNaN(released)) return false;
+  const ageDays = (Date.now() - released) / 86_400_000;
+  return ageDays < PROPAGATION_GRACE_DAYS;
+}
+
 function partition(releases, installable) {
   const unpublished = (r) =>
-    r.version !== 'Unreleased' && installable && !installable.has(r.version);
+    r.version !== 'Unreleased' &&
+    installable &&
+    !installable.has(r.version) &&
+    !tooNewToJudge(r);
   return {
     real: releases.filter((r) => !unpublished(r)),
     phantom: releases.filter(unpublished),
@@ -158,7 +184,10 @@ function render(releases, installable) {
 
   const sectionFor = (r) => {
     const unpublished =
-      r.version !== 'Unreleased' && installable && !installable.has(r.version);
+      r.version !== 'Unreleased' &&
+      installable &&
+      !installable.has(r.version) &&
+      !tooNewToJudge(r);
     const alreadyFlagged = /never published/i.test(r.body);
     const heading =
       r.version === 'Unreleased'
@@ -211,9 +240,13 @@ function render(releases, installable) {
 async function main() {
   let markdown;
   try {
-    const res = await fetch(SOURCE, { signal: AbortSignal.timeout(20_000) });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    markdown = await res.text();
+    if (SOURCE.startsWith('http')) {
+      const res = await fetch(SOURCE, { signal: AbortSignal.timeout(20_000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      markdown = await res.text();
+    } else {
+      markdown = await readFile(SOURCE, 'utf8');
+    }
   } catch (err) {
     // Soft failure: keep whatever is committed.
     let existing = false;
@@ -251,11 +284,19 @@ async function main() {
   );
   const skipped = releases.filter(
     (r) => r.version !== 'Unreleased' && installable && !installable.has(r.version)
+           && !tooNewToJudge(r)
+  );
+  const propagating = releases.filter(
+    (r) => r.version !== 'Unreleased' && installable && !installable.has(r.version)
+           && tooNewToJudge(r)
   );
   console.log(
     `[changelog] wrote ${releases.length} sections, ` +
       `latest installable v${named[0]?.version ?? '?'}` +
-      (skipped.length ? ` (${skipped.map((r) => 'v' + r.version).join(', ')} not on the proxy)` : '')
+      (skipped.length ? ` (${skipped.map((r) => 'v' + r.version).join(', ')} not on the proxy)` : '') +
+      (propagating.length
+        ? ` (${propagating.map((r) => 'v' + r.version).join(', ')} too new to check — assuming propagating)`
+        : '')
   );
 }
 
